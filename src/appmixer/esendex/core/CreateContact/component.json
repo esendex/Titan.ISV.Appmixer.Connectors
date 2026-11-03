@@ -1,0 +1,171 @@
+{
+    "name": "appmixer.esendex.core.CreateContact",
+    "label": "Create Contact",
+    "description": "Create a single contact in your Esendex account, with one or more communication addresses and optional metadata.",
+    "author": "Yanis Benhalima <yanis.benhalima@commify.com>",
+    "version": "1.0.0",
+    "auth": {
+        "service": "appmixer:esendex"
+    },
+    "inPorts": [
+        {
+            "name": "in",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "firstName": { "type": "string" },
+                    "lastName": { "type": "string" },
+                    "quickName": { "type": "string" },
+                    "addresses": { "type": "object" },
+                    "contactMetadata": { "type": "string" }
+                },
+                "required": ["firstName", "lastName"]
+            },
+            "inspector": {
+                "inputs": {
+                    "firstName": {
+                        "type": "text",
+                        "index": 1,
+                        "label": "First Name",
+                        "required": true,
+                        "tooltip": "The first name of the contact. Max length 500 characters."
+                    },
+                    "lastName": {
+                        "type": "text",
+                        "index": 2,
+                        "label": "Last Name",
+                        "required": true,
+                        "tooltip": "The last name of the contact. Max length 500 characters."
+                    },
+                    "quickName": {
+                        "type": "text",
+                        "index": 3,
+                        "label": "Quick Name",
+                        "tooltip": "Optional short name of the contact."
+                    },
+                    "addresses": {
+                        "type": "expression",
+                        "levels": ["ADD"],
+                        "index": 4,
+                        "label": "Addresses",
+                        "tooltip": "The contact's communication addresses (phone numbers or emails). Add one row per address.",
+                        "fields": {
+                            "addressType": {
+                                "type": "select",
+                                "label": "Address Type",
+                                "options": [
+                                    { "value": "Msisdn", "label": "Phone number (MSISDN)" },
+                                    { "value": "Email", "label": "Email" }
+                                ],
+                                "tooltip": "The type of address to store. Defaults to phone number."
+                            },
+                            "addressValue": {
+                                "type": "text",
+                                "label": "Address Value",
+                                "tooltip": "The phone number in international format (e.g. +447711000022) or the email address."
+                            },
+                            "optOutStatus": {
+                                "type": "select",
+                                "label": "Opt-Out Status",
+                                "options": [
+                                    { "value": "", "label": "Default" },
+                                    { "value": "Subscribed", "label": "Subscribed" },
+                                    { "value": "Unsubscribed", "label": "Unsubscribed" }
+                                ],
+                                "tooltip": "Whether the address is opted in to marketing communications."
+                            }
+                        }
+                    },
+                    "contactMetadata": {
+                        "type": "key-value",
+                        "keyLabel": "Key",
+                        "valueLabel": "Value",
+                        "addLabel": "Add item",
+                        "removeLabel": "Remove item",
+                        "index": 5,
+                        "label": "Contact Metadata",
+                        "tooltip": "Optional key/value pairs saved with the contact, e.g. team = octopus."
+                    }
+                }
+            }
+        }
+    ],
+    "outPorts": [
+        {
+            "name": "out",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "contactId": {
+                        "type": "string",
+                        "title": "Contact ID",
+                        "example": "c129b89f-515a-43e1-b990-91fc2de3d566"
+                    },
+                    "accountReference": {
+                        "type": "string",
+                        "title": "Account Reference",
+                        "example": "EXFR0000000"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "title": "First Name",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "title": "Last Name",
+                        "example": "Mclane"
+                    },
+                    "quickName": {
+                        "type": "string",
+                        "title": "Quick Name",
+                        "example": "Bruce"
+                    },
+                    "lastUpdatedBy": {
+                        "type": "string",
+                        "title": "Last Updated By",
+                        "example": "907da4a7-bb93-4772-8af4-a95cc59e5a91"
+                    },
+                    "createTimestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At",
+                        "example": "2024-11-25T13:28:17.087042Z"
+                    },
+                    "lastUpdateTimestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Last Updated At",
+                        "example": "2024-11-25T13:28:17.087042Z"
+                    },
+                    "addresses": {
+                        "type": "array",
+                        "title": "Addresses",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "addressId": { "type": "string" },
+                                "addressType": { "type": "string" },
+                                "addressValue": { "type": "string" },
+                                "destinationCode": { "type": "string" }
+                            }
+                        },
+                        "example": [
+                            {
+                                "addressId": "7ba907b4-ff85-4825-a413-d6b634b16536",
+                                "addressType": "MSISDN",
+                                "addressValue": "+447711000022",
+                                "destinationCode": "GB"
+                            }
+                        ]
+                    },
+                    "contactMetadata": {
+                        "type": "object",
+                        "title": "Contact Metadata",
+                        "example": { "team": "octopus" }
+                    }
+                }
+            }
+        }
+    ]
+}

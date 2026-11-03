@@ -1,0 +1,186 @@
+{
+    "name": "appmixer.esendex.core.FindOptOuts",
+    "label": "Find Opt Outs",
+    "description": "Find opt-outs in your Esendex account based on the specified filters. Fires the notFound port if no opt-out matches. Fetches pages of 1000 opt-outs internally; 'All items at once' is limited by the engine message size, 'Store to CSV file' streams a full export, and 'One item at a time' emits every record, resuming across runs on large accounts.",
+    "author": "Yanis Benhalima <yanis.benhalima@commify.com>",
+    "version": "1.0.0",
+    "auth": {
+        "service": "appmixer:esendex"
+    },
+    "inPorts": [
+        {
+            "name": "in",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "address": {
+                        "type": "string"
+                    },
+                    "channel": {
+                        "type": "string"
+                    },
+                    "optOutMethod": {
+                        "type": "string"
+                    },
+                    "startTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "endTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "sortBy": {
+                        "type": "string"
+                    },
+                    "sortOrder": {
+                        "type": "string"
+                    },
+                    "outputType": {
+                        "type": "string"
+                    }
+                }
+            },
+            "inspector": {
+                "inputs": {
+                    "address": {
+                        "type": "text",
+                        "index": 1,
+                        "label": "Address",
+                        "tooltip": "Filter by the phone number (MSISDN) the opt-out is associated with, e.g. +447123123123."
+                    },
+                    "channel": {
+                        "type": "text",
+                        "index": 2,
+                        "label": "Channel",
+                        "tooltip": "Filter by the channel the opt-out applies to, e.g. SMS."
+                    },
+                    "optOutMethod": {
+                        "type": "select",
+                        "index": 3,
+                        "label": "Opt-Out Method",
+                        "options": [
+                            {
+                                "content": "All",
+                                "value": ""
+                            },
+                            {
+                                "content": "Stop (customer replied to opt out)",
+                                "value": "Stop"
+                            },
+                            {
+                                "content": "Manual (added in the platform)",
+                                "value": "Manual"
+                            }
+                        ],
+                        "tooltip": "Filter by how the opt-out was received."
+                    },
+                    "startTime": {
+                        "type": "date-time",
+                        "index": 4,
+                        "label": "Created after",
+                        "config": {
+                            "enableTime": true,
+                            "enableSeconds": true
+                        },
+                        "tooltip": "Only return opt-outs created at or after this date (ISO 8601)."
+                    },
+                    "endTime": {
+                        "type": "date-time",
+                        "index": 5,
+                        "label": "Created before",
+                        "config": {
+                            "enableTime": true,
+                            "enableSeconds": true
+                        },
+                        "tooltip": "Only return opt-outs created at or before this date (ISO 8601)."
+                    },
+                    "sortBy": {
+                        "type": "select",
+                        "index": 6,
+                        "label": "Sort by",
+                        "options": [
+                            {
+                                "content": "Default",
+                                "value": ""
+                            },
+                            {
+                                "content": "Name",
+                                "value": "Name"
+                            },
+                            {
+                                "content": "Created at",
+                                "value": "createdAt"
+                            }
+                        ],
+                        "tooltip": "Field used to sort the results."
+                    },
+                    "sortOrder": {
+                        "type": "select",
+                        "index": 7,
+                        "label": "Sort order",
+                        "options": [
+                            {
+                                "content": "Default (descending)",
+                                "value": ""
+                            },
+                            {
+                                "content": "Ascending",
+                                "value": "Asc"
+                            },
+                            {
+                                "content": "Descending",
+                                "value": "Desc"
+                            }
+                        ],
+                        "tooltip": "Sorting direction. The API defaults to descending."
+                    },
+                    "outputType": {
+                        "type": "select",
+                        "index": 8,
+                        "label": "Output Type",
+                        "defaultValue": "array",
+                        "tooltip": "How the results are returned. 'All items at once' fits small result sets (limited by the engine message size); 'Store to CSV file' streams a full export of any size; 'One item at a time' emits every record and resumes across runs on large accounts; 'First item only' returns the first match.",
+                        "options": [
+                            {
+                                "label": "First Item Only",
+                                "value": "first"
+                            },
+                            {
+                                "label": "All items at once",
+                                "value": "array"
+                            },
+                            {
+                                "label": "One item at a time",
+                                "value": "object"
+                            },
+                            {
+                                "label": "Store to CSV file",
+                                "value": "file"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "outPorts": [
+        {
+            "name": "out",
+            "source": {
+                "url": "/component/appmixer/esendex/core/FindOptOuts?outPort=out&ignoreAuth=true",
+                "data": {
+                    "properties": {
+                        "generateOutputPortOptions": true
+                    },
+                    "messages": {
+                        "in/outputType": "inputs/in/outputType"
+                    }
+                }
+            }
+        },
+        {
+            "name": "notFound"
+        }
+    ]
+}

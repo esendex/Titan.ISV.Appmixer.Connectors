@@ -1,0 +1,149 @@
+{
+    "name": "appmixer.esendex.core.FindGroups",
+    "label": "Find Groups",
+    "description": "Find groups in your Esendex account based on the specified filters. Fires the notFound port if no group matches. Fetches pages of 1000 groups internally; 'All items at once' is limited by the engine message size, 'Store to CSV file' streams a full export, and 'One item at a time' emits every record, resuming across runs on large accounts.",
+    "icon": "data:image/png;base64,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",
+    "version": "1.0.0",
+    "auth": {
+        "service": "appmixer:esendex"
+    },
+    "inPorts": [
+        {
+            "name": "in",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "groupOwnership": {
+                        "type": "string"
+                    },
+                    "sortOrder": {
+                        "type": "string"
+                    },
+                    "sortBy": {
+                        "type": "string"
+                    },
+                    "outputType": {
+                        "type": "string"
+                    }
+                }
+            },
+            "inspector": {
+                "inputs": {
+                    "name": {
+                        "type": "text",
+                        "index": 1,
+                        "label": "Name",
+                        "tooltip": "Filter by the name of the group"
+                    },
+                    "groupOwnership": {
+                        "type": "select",
+                        "index": 2,
+                        "label": "Group Ownership",
+                        "options": [
+                            {
+                                "content": "All",
+                                "value": ""
+                            },
+                            {
+                                "content": "Owned",
+                                "value": "Owned"
+                            },
+                            {
+                                "content": "Shared",
+                                "value": "Shared"
+                            }
+                        ],
+                        "tooltip": "Specifies the ownership type of a group to filter by."
+                    },
+                    "sortBy": {
+                        "type": "select",
+                        "index": 3,
+                        "label": "Sort by",
+                        "options": [
+                            {
+                                "content": "Default",
+                                "value": ""
+                            },
+                            {
+                                "content": "Name",
+                                "value": "name"
+                            },
+                            {
+                                "content": "Created date",
+                                "value": "createdAt"
+                            }
+                        ],
+                        "tooltip": "Sort groups."
+                    },
+                    "sortOrder": {
+                        "type": "select",
+                        "index": 4,
+                        "label": "Sort order",
+                        "options": [
+                            {
+                                "content": "Default (Descending)",
+                                "value": ""
+                            },
+                            {
+                                "content": "Ascending",
+                                "value": "Asc"
+                            },
+                            {
+                                "content": "Descending",
+                                "value": "Desc"
+                            }
+                        ],
+                        "tooltip": "Sets the sorting direction."
+                    },
+                    "outputType": {
+                        "type": "select",
+                        "index": 5,
+                        "label": "Output Type",
+                        "defaultValue": "array",
+                        "tooltip": "How the results are returned. 'All items at once' fits small result sets (limited by the engine message size); 'Store to CSV file' streams a full export of any size; 'One item at a time' emits every record and resumes across runs on large accounts; 'First item only' returns the first match.",
+                        "options": [
+                            {
+                                "label": "First Item Only",
+                                "value": "first"
+                            },
+                            {
+                                "label": "All items at once",
+                                "value": "array"
+                            },
+                            {
+                                "label": "One item at a time",
+                                "value": "object"
+                            },
+                            {
+                                "label": "Store to CSV file",
+                                "value": "file"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "outPorts": [
+        {
+            "name": "out",
+            "source": {
+                "url": "/component/appmixer/esendex/core/FindGroups?outPort=out&ignoreAuth=true",
+                "data": {
+                    "properties": {
+                        "generateOutputPortOptions": true
+                    },
+                    "messages": {
+                        "in/outputType": "inputs/in/outputType"
+                    }
+                }
+            }
+        },
+        {
+            "name": "notFound"
+        }
+    ]
+}
