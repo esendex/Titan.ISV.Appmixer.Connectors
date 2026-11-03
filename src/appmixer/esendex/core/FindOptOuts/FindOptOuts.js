@@ -5,12 +5,15 @@ const lib = require('../../lib');
 // Shape of a single opt-out from GET /v2/optouts (data.optOuts[]). Used to
 // build the dynamic output port options (the variable picker) for the
 // selected output type.
-const outputSchema = {
-    id: { type: 'string', title: 'Opt-Out ID' },
-    accountReference: { type: 'string', title: 'Account Reference' },
-    channel: { type: 'string', title: 'Channel' },
-    value: { type: 'string', title: 'Address (Phone Number)' },
-    createTimestamp: { type: 'string', title: 'Created At' }
+const ITEM_SCHEMA = {
+    type: 'object',
+    properties: {
+        id: { type: 'string', title: 'Opt-Out ID', example: 'b5a5a418-294a-42a1-ae23-ecb2168dcd39' },
+        accountReference: { type: 'string', title: 'Account Reference', example: 'EXUK0000000' },
+        channel: { type: 'string', title: 'Channel', example: 'SMS' },
+        value: { type: 'string', title: 'Address (Phone Number)', example: '+447700900123' },
+        createTimestamp: { type: 'string', title: 'Created At', example: '2026-01-15T09:30:00Z' }
+    }
 };
 
 // Static routing shared by fresh runs and timeout continuations of 'object' exports.
@@ -23,6 +26,8 @@ const FIND = {
 };
 
 module.exports = {
+
+    ITEM_SCHEMA,
 
     async receive(context) {
 
@@ -45,7 +50,7 @@ module.exports = {
         // The Designer calls this (via the out port `source` block) to build the
         // variable picker for the chosen output type - no API call is made here.
         if (context.properties.generateOutputPortOptions) {
-            return lib.getOutputPortOptions(context, outputType, outputSchema, {
+            return lib.getOutputPortOptions(context, outputType, ITEM_SCHEMA.properties, {
                 label: 'Opt-Outs',
                 value: 'result'
             });

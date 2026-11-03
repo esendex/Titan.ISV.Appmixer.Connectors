@@ -5,24 +5,29 @@ const lib = require('../../lib');
 // Schema of a single template record as returned by GET /v2/templates
 // (https://developer.esendex.co.uk, Templates -> Get all). Used to generate
 // the dynamic output port options for the selected output type.
-const outputSchema = {
-    id: { type: 'string', title: 'Template ID' },
-    name: { type: 'string', title: 'Name' },
-    content: { type: 'string', title: 'Content' },
-    type: { type: 'string', title: 'Type' },
-    messageType: { type: 'string', title: 'Message Type' },
-    accountReference: { type: 'string', title: 'Account Reference' },
-    createTimestamp: { type: 'string', title: 'Created At' },
-    lastUpdateTimestamp: { type: 'string', title: 'Last Updated At' },
-    createdBy: { type: 'string', title: 'Created By' },
-    lastUpdatedBy: { type: 'string', title: 'Last Updated By' },
-    channelSettings: { type: 'array', title: 'Channel Settings' },
-    variables: { type: 'array', title: 'Variables' },
-    isLocked: { type: 'boolean', title: 'Is Locked' },
-    tags: { type: 'array', title: 'Tags' }
+const ITEM_SCHEMA = {
+    type: 'object',
+    properties: {
+        id: { type: 'string', title: 'Template ID', example: '486c5ddf-e047-49bf-a5ed-b3e3555f8843' },
+        name: { type: 'string', title: 'Name', example: 'Appointment reminder' },
+        content: { type: 'string', title: 'Content', example: 'Hi {{firstName}}, see you tomorrow at {{time}}.' },
+        type: { type: 'string', title: 'Type', example: 'Standard' },
+        messageType: { type: 'string', title: 'Message Type', example: 'Transactional' },
+        accountReference: { type: 'string', title: 'Account Reference', example: 'EXUK0000000' },
+        createTimestamp: { type: 'string', title: 'Created At', example: '2026-01-15T09:30:00Z' },
+        lastUpdateTimestamp: { type: 'string', title: 'Last Updated At', example: '2026-02-01T14:00:00Z' },
+        createdBy: { type: 'string', title: 'Created By', example: 'jane.doe@example.com' },
+        lastUpdatedBy: { type: 'string', title: 'Last Updated By', example: 'jane.doe@example.com' },
+        channelSettings: { type: 'array', title: 'Channel Settings', example: [{ channel: 'SMS' }] },
+        variables: { type: 'array', title: 'Variables', example: ['firstName', 'time'] },
+        isLocked: { type: 'boolean', title: 'Is Locked', example: false },
+        tags: { type: 'array', title: 'Tags', example: ['reminders'] }
+    }
 };
 
 module.exports = {
+
+    ITEM_SCHEMA,
 
     async receive(context) {
 
@@ -38,7 +43,7 @@ module.exports = {
         // Designer side-call (out port `source`): describe the output shape for
         // the selected output type - no API call is made in this mode.
         if (context.properties.generateOutputPortOptions) {
-            return lib.getOutputPortOptions(context, outputType, outputSchema, {
+            return lib.getOutputPortOptions(context, outputType, ITEM_SCHEMA.properties, {
                 label: 'Templates',
                 value: 'result'
             });

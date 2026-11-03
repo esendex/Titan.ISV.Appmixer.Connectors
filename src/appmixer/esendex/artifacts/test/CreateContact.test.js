@@ -77,7 +77,7 @@ describe('Esendex CreateContact', function() {
                 // the empty row must be ignored.
                 addresses: {
                     ADD: [
-                        { addressType: 'Msisdn', addressValue: '+447711000022', optOutStatus: 'Subscribed' },
+                        { addressType: 'Msisdn', addressValue: '+447700900022', optOutStatus: 'Subscribed' },
                         { addressType: 'Email', addressValue: '' }
                     ]
                 },
@@ -98,7 +98,7 @@ describe('Esendex CreateContact', function() {
             lastName: 'Mclane',
             quickName: 'Bruce',
             addresses: [
-                { addressType: 'Msisdn', addressValue: '+447711000022', optOutStatus: 'Subscribed' }
+                { addressType: 'Msisdn', addressValue: '+447700900022', optOutStatus: 'Subscribed' }
             ],
             contactMetadata: { team: 'octopus' }
         });
@@ -128,14 +128,14 @@ describe('Esendex CreateContact', function() {
             content: {
                 firstName: 'John',
                 lastName: 'Mclane',
-                addresses: { ADD: [{ addressValue: '+447711000022' }] }
+                addresses: { ADD: [{ addressValue: '+447700900022' }] }
             }
         });
 
         await CreateContact.receive(context);
 
         assert.deepStrictEqual(context.requests[0].data.addresses, [
-            { addressType: 'Msisdn', addressValue: '+447711000022' }
+            { addressType: 'Msisdn', addressValue: '+447700900022' }
         ]);
     });
 

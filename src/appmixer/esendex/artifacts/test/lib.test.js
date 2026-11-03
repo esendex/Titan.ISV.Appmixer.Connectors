@@ -24,7 +24,7 @@ function httpError(status, errors) {
     return err;
 }
 
-describe('Esendex lib.toApiError (CO-3911 retry semantics)', function() {
+describe('Esendex lib.toApiError (retry semantics)', function() {
 
     it('turns permanent 4xx errors into CancelError so the engine does not retry', function() {
 
@@ -71,7 +71,7 @@ describe('Esendex lib.toApiError (CO-3911 retry semantics)', function() {
     });
 });
 
-describe('Esendex lib.withExternalSource (CO-4491)', function() {
+describe('Esendex lib.withExternalSource', function() {
 
     it('adds X-External-Source and keeps the existing headers', function() {
 

@@ -5,32 +5,35 @@ const lib = require('../../lib');
 // Schema of a single message record as returned by GET /v2/messages
 // (https://developer.esendex.co.uk, Messaging -> Get all). Used to generate
 // the dynamic output port options for the selected output type.
-const outputSchema = {
-    messageId: { type: 'string', title: 'Message ID' },
-    requestId: { type: 'string', title: 'Request ID' },
-    accountReference: { type: 'string', title: 'Account Reference' },
-    userId: { type: 'string', title: 'User ID' },
-    submittedBy: { type: 'string', title: 'Submitted By' },
-    requestName: { type: 'string', title: 'Request Name' },
-    source: { type: 'string', title: 'Source' },
-    channel: { type: 'string', title: 'Channel' },
-    messageType: { type: 'string', title: 'Message Type' },
-    originator: { type: 'string', title: 'Originator' },
-    isBillable: { type: 'boolean', title: 'Is Billable' },
-    msisdn: { type: 'string', title: 'Phone Number' },
-    submittedMsisdn: { type: 'string', title: 'Submitted Phone Number' },
-    status: { type: 'string', title: 'Status' },
-    reason: { type: 'string', title: 'Reason' },
-    destinationCode: { type: 'string', title: 'Destination Code' },
-    messagePartCount: { type: 'integer', title: 'Message Part Count' },
-    networkUsed: { type: 'string', title: 'Network Used' },
-    route: { type: 'string', title: 'Route' },
-    submittedAt: { type: 'string', title: 'Submitted At' },
-    sentAt: { type: 'string', title: 'Sent At' },
-    lastUpdateTimestamp: { type: 'string', title: 'Last Update Timestamp' },
-    direction: { type: 'string', title: 'Direction' },
-    isDeleted: { type: 'boolean', title: 'Is Deleted' },
-    isDeletedBy: { type: 'string', title: 'Is Deleted By' }
+const ITEM_SCHEMA = {
+    type: 'object',
+    properties: {
+        messageId: { type: 'string', title: 'Message ID', example: '8eb5fe15-07d7-49a7-b17a-3011de6d949f' },
+        requestId: { type: 'string', title: 'Request ID', example: 'c5a5eddc-b0ad-4147-8e97-e2e25d9ddfb0' },
+        accountReference: { type: 'string', title: 'Account Reference', example: 'EXUK0000000' },
+        userId: { type: 'string', title: 'User ID', example: '11111111-1111-4111-8111-111111111111' },
+        submittedBy: { type: 'string', title: 'Submitted By', example: 'jane.doe@example.com' },
+        requestName: { type: 'string', title: 'Request Name', example: 'Spring campaign' },
+        source: { type: 'string', title: 'Source', example: 'API' },
+        channel: { type: 'string', title: 'Channel', example: 'SMS' },
+        messageType: { type: 'string', title: 'Message Type', example: 'Marketing' },
+        originator: { type: 'string', title: 'Originator', example: 'Esendex' },
+        isBillable: { type: 'boolean', title: 'Is Billable', example: true },
+        msisdn: { type: 'string', title: 'Phone Number', example: '+447700900123' },
+        submittedMsisdn: { type: 'string', title: 'Submitted Phone Number', example: '07700900123' },
+        status: { type: 'string', title: 'Status', example: 'Delivered' },
+        reason: { type: 'string', title: 'Reason', example: '' },
+        destinationCode: { type: 'string', title: 'Destination Code', example: 'GB' },
+        messagePartCount: { type: 'integer', title: 'Message Part Count', example: 1 },
+        networkUsed: { type: 'string', title: 'Network Used', example: 'Vodafone UK' },
+        route: { type: 'string', title: 'Route', example: 'Standard' },
+        submittedAt: { type: 'string', title: 'Submitted At', example: '2026-01-15T09:30:00Z' },
+        sentAt: { type: 'string', title: 'Sent At', example: '2026-01-15T09:30:02Z' },
+        lastUpdateTimestamp: { type: 'string', title: 'Last Update Timestamp', example: '2026-01-15T09:30:05Z' },
+        direction: { type: 'string', title: 'Direction', example: 'Outbound' },
+        isDeleted: { type: 'boolean', title: 'Is Deleted', example: false },
+        isDeletedBy: { type: 'string', title: 'Is Deleted By', example: '' }
+    }
 };
 
 // Static routing shared by fresh runs and timeout continuations of 'object' exports.
@@ -42,6 +45,8 @@ const FIND = {
 };
 
 module.exports = {
+
+    ITEM_SCHEMA,
 
     async receive(context) {
 
@@ -65,7 +70,7 @@ module.exports = {
         // Called by the Designer (through the out port `source` block) to render
         // the variable picker for the selected output type - no API call is made.
         if (context.properties.generateOutputPortOptions) {
-            return lib.getOutputPortOptions(context, outputType, outputSchema, {
+            return lib.getOutputPortOptions(context, outputType, ITEM_SCHEMA.properties, {
                 label: 'Messages',
                 value: 'result'
             });

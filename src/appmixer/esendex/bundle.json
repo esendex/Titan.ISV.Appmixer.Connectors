@@ -1,6 +1,6 @@
 {
     "name": "appmixer.esendex",
-    "version": "1.8.0",
+    "version": "1.9.0",
     "changelog": {
         "1.0.0": [
             "Initial release: API key authentication, SendMessage, FindMessages and MakeApiCall components."
@@ -30,6 +30,11 @@
         ],
         "1.8.0": [
             "SendMessage and CreateThrottleSchedule: send the X-External-Source header so the API gateway attributes requests to this integration."
+        ],
+        "1.9.0": [
+            "Every component now ships the Esendex logo as an SVG icon (two components had none).",
+            "Find Contacts, Find Groups, Find Messages, Find Opt Outs and Find Templates export their output contract as ITEM_SCHEMA, with an example for each field shown in the variable picker.",
+            "Create Throttle Schedule: the billing output fields are titled Billing Details.Projected Balance / Billing Details.Currency so they can be told apart in the variable picker."
         ]
     }
 }

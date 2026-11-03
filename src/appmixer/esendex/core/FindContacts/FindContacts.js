@@ -5,31 +5,41 @@ const lib = require('../../lib');
 // Shape of a single contact from GET /v2/contacts/filter (data.contacts[]).
 // Used to build the dynamic output port options (the variable picker) for the
 // selected output type.
-const outputSchema = {
-    contactId: { type: 'string', title: 'Contact ID' },
-    accountReference: { type: 'string', title: 'Account Reference' },
-    firstName: { type: 'string', title: 'First Name' },
-    lastName: { type: 'string', title: 'Last Name' },
-    quickName: { type: 'string', title: 'Quick Name' },
-    lastUpdatedBy: { type: 'string', title: 'Last Updated By' },
-    smsoptOutStatus: { type: 'string', title: 'SMS Opt-Out Status' }, // lower-case 'o' matches the API, not a typo
-    createTimestamp: { type: 'string', title: 'Created At' },
-    lastUpdateTimestamp: { type: 'string', title: 'Last Update At' },
-    addresses: {
-        type: 'array',
-        title: 'Addresses',
-        items: {
-            type: 'object',
-            properties: {
-                addressId: { type: 'string' },
-                addressType: { type: 'string' },
-                addressValue: { type: 'string' },
-                destinationCode: { type: 'string' },
-                optOutStatus: { type: 'string' }
+const ITEM_SCHEMA = {
+    type: 'object',
+    properties: {
+        contactId: { type: 'string', title: 'Contact ID', example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+        accountReference: { type: 'string', title: 'Account Reference', example: 'EXUK0000000' },
+        firstName: { type: 'string', title: 'First Name', example: 'Jane' },
+        lastName: { type: 'string', title: 'Last Name', example: 'Doe' },
+        quickName: { type: 'string', title: 'Quick Name', example: 'Jane D' },
+        lastUpdatedBy: { type: 'string', title: 'Last Updated By', example: 'jane.doe@example.com' },
+        smsoptOutStatus: { type: 'string', title: 'SMS Opt-Out Status', example: 'Subscribed' }, // lower-case 'o' matches the API, not a typo
+        createTimestamp: { type: 'string', title: 'Created At', example: '2026-01-15T09:30:00Z' },
+        lastUpdateTimestamp: { type: 'string', title: 'Last Update At', example: '2026-02-01T14:00:00Z' },
+        addresses: {
+            type: 'array',
+            title: 'Addresses',
+            example: [{
+                addressId: '7ba907b4-ff85-4825-a413-d6b634b16536',
+                addressType: 'Msisdn',
+                addressValue: '+447700900123',
+                destinationCode: 'GB',
+                optOutStatus: 'Subscribed'
+            }],
+            items: {
+                type: 'object',
+                properties: {
+                    addressId: { type: 'string' },
+                    addressType: { type: 'string' },
+                    addressValue: { type: 'string' },
+                    destinationCode: { type: 'string' },
+                    optOutStatus: { type: 'string' }
+                }
             }
-        }
-    },
-    contactMetadata: { type: 'object', title: 'Contact Metadata' }
+        },
+        contactMetadata: { type: 'object', title: 'Contact Metadata', example: { customerTier: 'gold' } }
+    }
 };
 
 // Static routing shared by fresh runs and timeout continuations of 'object' exports.
@@ -41,6 +51,8 @@ const FIND = {
 };
 
 module.exports = {
+
+    ITEM_SCHEMA,
 
     async receive(context) {
 
@@ -63,7 +75,7 @@ module.exports = {
         // The Designer calls this (via the out port `source` block) to build the
         // variable picker for the chosen output type - no API call is made here.
         if (context.properties.generateOutputPortOptions) {
-            return lib.getOutputPortOptions(context, outputType, outputSchema, {
+            return lib.getOutputPortOptions(context, outputType, ITEM_SCHEMA.properties, {
                 label: 'Contacts',
                 value: 'result'
             });

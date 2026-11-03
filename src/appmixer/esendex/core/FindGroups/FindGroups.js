@@ -5,15 +5,18 @@ const lib = require('../../lib');
 // Shape of a single group from GET /v2/groups (data.groups[]).
 // Used to build the dynamic output port options (the variable picker) for the
 // selected output type.
-const outputSchema = {
-    groupId: { type: 'string', title: 'Group ID' },
-    accountReference: { type: 'string', title: 'Account Reference' },
-    name: { type: 'string', title: 'Name' },
-    description: { type: 'string', title: 'Description' },
-    contactsCount: { type: 'integer', title: 'Contact Count' },
-    lastUpdatedBy: { type: 'string', title: 'Last Updated By' },
-    createTimestamp: { type: 'string', title: 'Created At' },
-    lastUpdateTimestamp: { type: 'string', title: 'Last Update At' }
+const ITEM_SCHEMA = {
+    type: 'object',
+    properties: {
+        groupId: { type: 'string', title: 'Group ID', example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+        accountReference: { type: 'string', title: 'Account Reference', example: 'EXUK0000000' },
+        name: { type: 'string', title: 'Name', example: 'VIP customers' },
+        description: { type: 'string', title: 'Description', example: 'Customers on the VIP plan' },
+        contactsCount: { type: 'integer', title: 'Contact Count', example: 42 },
+        lastUpdatedBy: { type: 'string', title: 'Last Updated By', example: 'jane.doe@example.com' },
+        createTimestamp: { type: 'string', title: 'Created At', example: '2026-01-15T09:30:00Z' },
+        lastUpdateTimestamp: { type: 'string', title: 'Last Update At', example: '2026-02-01T14:00:00Z' }
+    }
 };
 
 // Static routing shared by fresh runs and timeout continuations of 'object' exports.
@@ -25,6 +28,8 @@ const FIND = {
 };
 
 module.exports = {
+
+    ITEM_SCHEMA,
 
     async receive(context) {
 
@@ -44,7 +49,7 @@ module.exports = {
         // The Designer calls this (via the out port `source` block) to build the
         // variable picker for the chosen output type - no API call is made here.
         if (context.properties.generateOutputPortOptions) {
-            return lib.getOutputPortOptions(context, outputType, outputSchema, {
+            return lib.getOutputPortOptions(context, outputType, ITEM_SCHEMA.properties, {
                 label: 'Groups',
                 value: 'result'
             });

@@ -8,7 +8,7 @@ const { PassThrough } = require('stream');
 // domains or the Esendex test environment) via the optional "Base URL" auth field.
 const DEFAULT_BASE_URL = 'https://api.esendex.co.uk';
 
-// Value of the X-External-Source header (CO-4491). The API gateway matches it
+// Value of the X-External-Source header. The API gateway matches it
 // case-insensitively against its allow-list and forwards it as the request source
 // downstream; an unknown value is downgraded to "API", never rejected.
 const EXTERNAL_SOURCE = 'Appmixer';
@@ -16,7 +16,7 @@ const EXTERNAL_SOURCE = 'Appmixer';
 // Prefix of CSV files produced by the 'file' output type of Find/List components.
 const DEFAULT_PREFIX = 'esendex-objects-export';
 
-// --- Large-volume pagination constants (CO-3783, Appmixer guidance 2026-08-18) ---
+// --- Large-volume pagination constants (Appmixer guidance) ---
 
 // Documented maximum page size of the Esendex v2 list endpoints.
 const PAGE_SIZE = 1000;
@@ -93,8 +93,8 @@ module.exports = {
         }
     },
 
-    // Convert an HTTP error into the right kind of error for the engine
-    // (CO-3911). Permanent client errors (4xx except 408/429) become
+    // Convert an HTTP error into the right kind of error for the engine.
+    // Permanent client errors (4xx except 408/429) become
     // context.CancelError so the run fails fast instead of being auto-retried
     // forever; transient failures (408/429, 5xx, network) stay regular errors
     // so the engine's automatic retry can help. The structured Esendex error
@@ -149,7 +149,7 @@ module.exports = {
 
     // Run a paginated Find against one Esendex v2 list endpoint and deliver the
     // result in the selected output type. Implements the Appmixer large-volume
-    // pattern (CO-3783): the page loop stops on end-of-data, a serialized-size
+    // pattern: the page loop stops on end-of-data, a serialized-size
     // budget, or an execution-time deadline - never on a record-count cap - and
     // the stop reason is always logged.
     //
