@@ -1,0 +1,192 @@
+{
+    "name": "E2E Esendex - create throttle schedule",
+    "description": "End-to-end test for the Esendex connector - creates a rate-based throttle schedule with a run-stamped request name via CreateThrottleSchedule and asserts the returned throttleScheduleId. IMPORTANT: the API caps schedules at 365 days ahead, so the static start date below must stay within a year of today (bump it when it goes stale) and created 'E2E' schedules WILL dispatch on that date unless deleted first - remove them via DELETE /v2/throttle-schedule/{throttleScheduleId} (MakeApiCall) or the Esendex portal. The recipient is in the Ofcom drama range (+44 7700 900xxx), which is never allocated to real users.",
+    "flow": {
+        "on-start": {
+            "type": "appmixer.utils.controls.OnStart",
+            "x": 64,
+            "y": 16,
+            "source": {},
+            "version": "1.0.0",
+            "config": {},
+            "errorHandling": {
+                "autoRetry": false,
+                "onError": "stopFlow"
+            }
+        },
+        "create-throttle-schedule": {
+            "type": "appmixer.esendex.core.CreateThrottleSchedule",
+            "x": 256,
+            "y": 16,
+            "version": "1.0.0",
+            "source": {
+                "in": {
+                    "on-start": [
+                        "out"
+                    ]
+                }
+            },
+            "config": {
+                "transform": {
+                    "in": {
+                        "on-start": {
+                            "out": {
+                                "type": "json2new",
+                                "modifiers": {
+                                    "name": {
+                                        "ts-var": {
+                                            "variable": "$.on-start.out.started",
+                                            "functions": [
+                                                {
+                                                    "name": "g_timestamp"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                "lambda": {
+                                    "scheduleType": "rate",
+                                    "startDate": "2027-06-01",
+                                    "timeSlotStart": "12:00:00",
+                                    "rateOfSend": 100,
+                                    "messageText": "E2E throttle schedule test - delete before the start date",
+                                    "recipients": "+447700900123",
+                                    "from": "E2ETest",
+                                    "name": "E2E-Throttle-{{{ts-var}}}"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "errorHandling": {
+                "autoRetry": false,
+                "onError": "stopFlow"
+            }
+        },
+        "assert-create": {
+            "type": "appmixer.utils.test.Assert",
+            "x": 448,
+            "y": 16,
+            "version": "1.0.0",
+            "source": {
+                "in": {
+                    "create-throttle-schedule": [
+                        "out"
+                    ]
+                }
+            },
+            "config": {
+                "transform": {
+                    "in": {
+                        "create-throttle-schedule": {
+                            "out": {
+                                "type": "json2new",
+                                "modifiers": {
+                                    "expression": {
+                                        "check-id": {
+                                            "variable": "$.create-throttle-schedule.out.throttleScheduleId",
+                                            "functions": []
+                                        },
+                                        "check-recipients": {
+                                            "variable": "$.create-throttle-schedule.out.numberOfRecipients",
+                                            "functions": []
+                                        }
+                                    }
+                                },
+                                "lambda": {
+                                    "expression": {
+                                        "AND": [
+                                            {
+                                                "field": "{{{check-id}}}",
+                                                "assertion": "notEmpty"
+                                            },
+                                            {
+                                                "field": "{{{check-recipients}}}",
+                                                "assertion": "equal",
+                                                "expected": 1
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "errorHandling": {
+                "autoRetry": false,
+                "onError": "stopFlow"
+            }
+        },
+        "after-all": {
+            "type": "appmixer.utils.test.AfterAll",
+            "x": 640,
+            "y": 16,
+            "version": "1.0.0",
+            "source": {
+                "in": {
+                    "assert-create": [
+                        "out"
+                    ]
+                }
+            },
+            "config": {
+                "properties": {
+                    "timeout": 120
+                }
+            },
+            "errorHandling": {
+                "autoRetry": false,
+                "onError": "stopFlow"
+            }
+        },
+        "process-results": {
+            "type": "appmixer.utils.test.ProcessE2EResults",
+            "x": 832,
+            "y": 16,
+            "version": "1.0.0",
+            "source": {
+                "in": {
+                    "after-all": [
+                        "out"
+                    ]
+                }
+            },
+            "config": {
+                "properties": {
+                    "successStoreId": "6a7f29eeff46475feb6734f5",
+                    "failedStoreId": "6a7f29ee62f8490f6b01bf56"
+                },
+                "transform": {
+                    "in": {
+                        "after-all": {
+                            "out": {
+                                "type": "json2new",
+                                "modifiers": {
+                                    "recipients": {},
+                                    "testCase": {},
+                                    "result": {
+                                        "result-var": {
+                                            "variable": "$.after-all.out",
+                                            "functions": []
+                                        }
+                                    }
+                                },
+                                "lambda": {
+                                    "recipients": "test@appmixer.com",
+                                    "testCase": "E2E Esendex - create throttle schedule",
+                                    "result": "{{{result-var}}}"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "errorHandling": {
+                "autoRetry": false,
+                "onError": "stopFlow"
+            }
+        }
+    }
+}

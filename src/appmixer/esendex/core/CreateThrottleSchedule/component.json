@@ -1,0 +1,401 @@
+{
+    "name": "appmixer.esendex.core.CreateThrottleSchedule",
+    "label": "Create Throttle Schedule",
+    "description": "Create a throttled batch message schedule: send a large SMS batch at a fixed hourly rate, or spread it evenly across a start/end date window.",
+    "author": "Yanis Benhalima <yanis.benhalima@commify.com>",
+    "version": "1.0.0",
+    "auth": {
+        "service": "appmixer:esendex"
+    },
+    "inPorts": [
+        {
+            "name": "in",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "scheduleType": {
+                        "type": "string",
+                        "enum": [
+                            "rate",
+                            "period"
+                        ]
+                    },
+                    "startDate": {
+                        "type": "string"
+                    },
+                    "timeSlotStart": {
+                        "type": "string"
+                    },
+                    "rateOfSend": {
+                        "type": [
+                            "number",
+                            "string"
+                        ]
+                    },
+                    "endDate": {
+                        "type": "string"
+                    },
+                    "timeSlotEnd": {
+                        "type": "string"
+                    },
+                    "daysOfWeek": {
+                        "type": [
+                            "array",
+                            "string"
+                        ]
+                    },
+                    "from": {
+                        "type": "string"
+                    },
+                    "messageText": {
+                        "type": "string"
+                    },
+                    "recipients": {
+                        "type": "string"
+                    },
+                    "contactIds": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "characterSet": {
+                        "type": "string",
+                        "enum": [
+                            "Auto",
+                            "GSM",
+                            "Unicode"
+                        ]
+                    },
+                    "messageType": {
+                        "type": "string",
+                        "enum": [
+                            "MarketingAndResearch",
+                            "NotificationsAndReminders",
+                            "AuthenticationAndSecurity",
+                            "PaymentsAndCollections",
+                            "InternalOperations",
+                            "CustomerSupport",
+                            "Conversational"
+                        ]
+                    },
+                    "metaData": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "scheduleType",
+                    "startDate",
+                    "timeSlotStart",
+                    "messageText"
+                ],
+                "if": {
+                    "properties": {
+                        "scheduleType": {
+                            "const": "period"
+                        }
+                    }
+                },
+                "then": {
+                    "required": [
+                        "endDate",
+                        "timeSlotEnd"
+                    ]
+                },
+                "else": {
+                    "required": [
+                        "rateOfSend"
+                    ]
+                }
+            },
+            "inspector": {
+                "inputs": {
+                    "scheduleType": {
+                        "type": "select",
+                        "label": "Schedule type",
+                        "group": "schedule",
+                        "index": 1,
+                        "required": true,
+                        "defaultValue": "rate",
+                        "options": [
+                            {
+                                "content": "Rate-based (messages per hour)",
+                                "value": "rate"
+                            },
+                            {
+                                "content": "Period-based (finish by an end date)",
+                                "value": "period"
+                            }
+                        ],
+                        "tooltip": "Rate-based: you set how many messages are sent per hour and the platform estimates the end date. Period-based: you set the end date/time and the platform derives the optimal rate."
+                    },
+                    "startDate": {
+                        "type": "date-time",
+                        "label": "Start date",
+                        "group": "schedule",
+                        "index": 2,
+                        "required": true,
+                        "config": {
+                            "enableTime": false
+                        },
+                        "tooltip": "The day the schedule starts sending, at most 365 days in the future. All schedule dates and times are UTC."
+                    },
+                    "timeSlotStart": {
+                        "type": "text",
+                        "label": "Time slot start",
+                        "group": "schedule",
+                        "index": 3,
+                        "required": true,
+                        "tooltip": "The time of day sending starts, in HH:MM:SS 24-hour UTC format, e.g. 15:30:00."
+                    },
+                    "rateOfSend": {
+                        "type": "number",
+                        "label": "Rate of send",
+                        "group": "schedule",
+                        "index": 4,
+                        "required": true,
+                        "when": {
+                            "eq": {
+                                "./scheduleType": "rate"
+                            }
+                        },
+                        "tooltip": "The number of messages to send per hour. Required for a rate-based schedule; the platform estimates the end date from this rate."
+                    },
+                    "endDate": {
+                        "type": "date-time",
+                        "label": "End date",
+                        "group": "schedule",
+                        "index": 5,
+                        "required": true,
+                        "when": {
+                            "eq": {
+                                "./scheduleType": "period"
+                            }
+                        },
+                        "config": {
+                            "enableTime": false
+                        },
+                        "tooltip": "The day all messages must be sent by. Required for a period-based schedule."
+                    },
+                    "timeSlotEnd": {
+                        "type": "text",
+                        "label": "Time slot end",
+                        "group": "schedule",
+                        "index": 6,
+                        "required": true,
+                        "when": {
+                            "eq": {
+                                "./scheduleType": "period"
+                            }
+                        },
+                        "tooltip": "The time of day sending stops, in HH:MM:SS 24-hour UTC format, e.g. 16:30:00. Required for a period-based schedule."
+                    },
+                    "daysOfWeek": {
+                        "type": "multiselect",
+                        "label": "Days of week",
+                        "group": "schedule",
+                        "index": 7,
+                        "options": [
+                            {
+                                "label": "Monday",
+                                "value": "Monday"
+                            },
+                            {
+                                "label": "Tuesday",
+                                "value": "Tuesday"
+                            },
+                            {
+                                "label": "Wednesday",
+                                "value": "Wednesday"
+                            },
+                            {
+                                "label": "Thursday",
+                                "value": "Thursday"
+                            },
+                            {
+                                "label": "Friday",
+                                "value": "Friday"
+                            },
+                            {
+                                "label": "Saturday",
+                                "value": "Saturday"
+                            },
+                            {
+                                "label": "Sunday",
+                                "value": "Sunday"
+                            }
+                        ],
+                        "tooltip": "Optional: only send on these days of the week. Leave empty to allow any day."
+                    },
+                    "from": {
+                        "type": "text",
+                        "label": "From (sender ID)",
+                        "group": "message",
+                        "index": 1,
+                        "tooltip": "Originator: an alphanumeric sender ID, or a numeric VMN/shortcode you own. Required unless a default sender ID is set on your Esendex account."
+                    },
+                    "messageText": {
+                        "type": "textarea",
+                        "label": "Message text",
+                        "group": "message",
+                        "index": 2,
+                        "required": true,
+                        "tooltip": "The message content sent to every recipient. Embed [shorten:http://your/url] to auto-shorten a URL (full accounts only)."
+                    },
+                    "recipients": {
+                        "type": "textarea",
+                        "label": "Recipient numbers",
+                        "group": "recipients",
+                        "index": 1,
+                        "tooltip": "Phone numbers in international format (e.g. +447700900123), one per line or comma-separated. Use this and/or contact IDs."
+                    },
+                    "contactIds": {
+                        "type": "textarea",
+                        "label": "Address book contact IDs",
+                        "group": "recipients",
+                        "index": 2,
+                        "tooltip": "Esendex contact IDs (GUIDs), one per line or comma-separated. Max 50,000 contacts per request."
+                    },
+                    "name": {
+                        "type": "text",
+                        "label": "Request name",
+                        "group": "options",
+                        "index": 1,
+                        "tooltip": "Optional friendly name shown in message-history exports."
+                    },
+                    "characterSet": {
+                        "type": "select",
+                        "label": "Character set",
+                        "group": "options",
+                        "index": 2,
+                        "options": [
+                            {
+                                "content": "Auto",
+                                "value": "Auto"
+                            },
+                            {
+                                "content": "GSM",
+                                "value": "GSM"
+                            },
+                            {
+                                "content": "Unicode",
+                                "value": "Unicode"
+                            }
+                        ],
+                        "tooltip": "Auto (default) detects Unicode and falls back to GSM. GSM ~140 chars/part; Unicode ~70 chars/part."
+                    },
+                    "messageType": {
+                        "type": "select",
+                        "label": "Message type",
+                        "group": "options",
+                        "index": 3,
+                        "options": [
+                            {
+                                "content": "Marketing and research",
+                                "value": "MarketingAndResearch"
+                            },
+                            {
+                                "content": "Notifications and reminders",
+                                "value": "NotificationsAndReminders"
+                            },
+                            {
+                                "content": "Authentication and security",
+                                "value": "AuthenticationAndSecurity"
+                            },
+                            {
+                                "content": "Payments and collections",
+                                "value": "PaymentsAndCollections"
+                            },
+                            {
+                                "content": "Internal operations",
+                                "value": "InternalOperations"
+                            },
+                            {
+                                "content": "Customer support",
+                                "value": "CustomerSupport"
+                            },
+                            {
+                                "content": "Conversational",
+                                "value": "Conversational"
+                            }
+                        ],
+                        "tooltip": "Helps Esendex reporting classify the message."
+                    },
+                    "metaData": {
+                        "type": "textarea",
+                        "label": "Metadata (JSON)",
+                        "group": "options",
+                        "index": 4,
+                        "tooltip": "Optional JSON object of key/value pairs saved with the request, e.g. {\"campaignId\": \"123\"}."
+                    }
+                },
+                "groups": {
+                    "schedule": {
+                        "label": "Schedule",
+                        "index": 1
+                    },
+                    "message": {
+                        "label": "Message",
+                        "index": 2
+                    },
+                    "recipients": {
+                        "label": "Recipients",
+                        "index": 3
+                    },
+                    "options": {
+                        "label": "Advanced options",
+                        "index": 4
+                    }
+                }
+            }
+        }
+    ],
+    "outPorts": [
+        {
+            "name": "out",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "throttleScheduleId": {
+                        "type": "string",
+                        "title": "Throttle Schedule ID",
+                        "example": "9ecac452-f585-4b1f-be45-7657a8583521"
+                    },
+                    "estimatedEndDateTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Estimated End Date Time",
+                        "example": "2025-07-10T15:51:00.0000000Z"
+                    },
+                    "numberOfRecipients": {
+                        "type": "integer",
+                        "title": "Number Of Recipients",
+                        "example": 1
+                    },
+                    "estimatedRateOfSend": {
+                        "type": "integer",
+                        "title": "Estimated Rate Of Send",
+                        "example": 50
+                    },
+                    "billingDetails": {
+                        "type": "object",
+                        "title": "Billing Details",
+                        "properties": {
+                            "projectedBalance": {
+                                "type": "number",
+                                "title": "Billing Details.Projected Balance",
+                                "example": 4.75
+                            },
+                            "currency": {
+                                "type": "string",
+                                "title": "Billing Details.Currency",
+                                "example": "EUR"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+DQoNCjxwYXRoIGQ9Ik0yMiAyOC44MDg2QzYxLjM2MjkgMjkuMjE4MiA5Ni44MjYxIDQ1Ljg5NjkgMTIxLjk4NyA3Mi40Mzk3QzExNy43MDggNzcuODMgMTEyLjk1MyA4Mi44MjQzIDEwNy43ODQgODcuMzU4MkM3MC44NTYyIDgyLjM2NjUgMzkuNDM1OSA2MC4wMjQ4IDIyIDI4LjgwODZaIiBmaWxsPSIjN0E1REQ4Ii8+DQo8cGF0aCBkPSJNOTAuNjI0NiA0Ny42MjU3QzEwMi4yNDQgNTQuMzc0NiAxMTIuODAyIDYyLjc1MDQgMTIxLjk4NyA3Mi40NDAxQzEwMy4wMyA5Ni4zMjUzIDc0LjY5NDIgMTEyLjQzIDQyLjU0NjEgMTE1LjE4OUM1My4xMTM5IDg5LjAxMSA2OS43MTQxIDY1LjkxNTYgOTAuNjI0NiA0Ny42MjU3WiIgZmlsbD0iIzc0NzFDNiIvPg0KPHBhdGggZD0iTTkwLjYyMzcgNDcuNjI2MkM5Ny4yMTMxIDUxLjQ1MzUgMTAzLjQ2MSA1NS44MDM4IDEwOS4zMTEgNjAuNjIwMkMxMDkuODY2IDYxLjA3NzIgMTEwLjQxNyA2MS41MzgxIDExMC45NjUgNjIuMDAzNEMxMTEuMDQ0IDYyLjA3MDIgMTExLjEyMiA2Mi4xMzczIDExMS4yMDEgNjIuMjA0M0MxMTEuNzc1IDYyLjY5MzkgMTEyLjM0NCA2My4xODgxIDExMi45MSA2My42ODY4QzExMi45NiA2My43MzExIDExMy4wMSA2My43NzU1IDExMy4wNiA2My44MTk5QzExMy42NCA2NC4zMzI0IDExNC4yMTYgNjQuODQ5MiAxMTQuNzg3IDY1LjM3MTFDMTE1LjEzNCA2NS42ODc4IDExNS40NzkgNjYuMDA2MiAxMTUuODIyIDY2LjMyNjNDMTE3LjAwNiA2Ny40MzAyIDExOC4xNzEgNjguNTU0NSAxMTkuMzE2IDY5LjY5ODRDMTE5LjM0NSA2OS43MjczIDExOS4zNzQgNjkuNzU2MSAxMTkuNDAzIDY5Ljc4NUMxMTkuOTY1IDcwLjM0NzQgMTIwLjUyMSA3MC45MTUgMTIxLjA3NCA3MS40ODY4QzEyMS4wOTUgNzEuNTA5MSAxMjEuMTE3IDcxLjUzMTMgMTIxLjEzOCA3MS41NTM2QzEyMS40MjIgNzEuODQ3OCAxMjEuNzA1IDcyLjE0MyAxMjEuOTg2IDcyLjQzOTZDMTE3LjcyNiA3Ny44MDY4IDExMi45OTMgODIuNzgxMSAxMDcuODUgODcuMjk5NUMxMDcuODI4IDg3LjMxODkgMTA3LjgwNSA4Ny4zMzgyIDEwNy43ODMgODcuMzU3NkM5Mi45MTU0IDg1LjM0NzcgNzguOTQwNyA4MC41MjUgNjYuNDExNiA3My40NDMyQzczLjYxNDEgNjQuMDU2NSA4MS43Mjg4IDU1LjQwNjQgOTAuNjIzNyA0Ny42MjYyWiIgZmlsbD0iI0ExODdGRiIvPg0KPC9zdmc+"
+}

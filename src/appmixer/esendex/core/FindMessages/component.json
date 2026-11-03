@@ -1,0 +1,168 @@
+{
+    "name": "appmixer.esendex.core.FindMessages",
+    "label": "Find Messages",
+    "description": "Search the sent and received messages of your Esendex account based on the specified filters. Fires the notFound port if no message matches. Fetches pages of 1000 messages internally; 'All items at once' is limited by the engine message size, 'Store to CSV file' streams a full export, and 'One item at a time' emits every record, resuming across runs on large accounts.",
+    "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+DQoNCjxwYXRoIGQ9Ik0yMiAyOC44MDg2QzYxLjM2MjkgMjkuMjE4MiA5Ni44MjYxIDQ1Ljg5NjkgMTIxLjk4NyA3Mi40Mzk3QzExNy43MDggNzcuODMgMTEyLjk1MyA4Mi44MjQzIDEwNy43ODQgODcuMzU4MkM3MC44NTYyIDgyLjM2NjUgMzkuNDM1OSA2MC4wMjQ4IDIyIDI4LjgwODZaIiBmaWxsPSIjN0E1REQ4Ii8+DQo8cGF0aCBkPSJNOTAuNjI0NiA0Ny42MjU3QzEwMi4yNDQgNTQuMzc0NiAxMTIuODAyIDYyLjc1MDQgMTIxLjk4NyA3Mi40NDAxQzEwMy4wMyA5Ni4zMjUzIDc0LjY5NDIgMTEyLjQzIDQyLjU0NjEgMTE1LjE4OUM1My4xMTM5IDg5LjAxMSA2OS43MTQxIDY1LjkxNTYgOTAuNjI0NiA0Ny42MjU3WiIgZmlsbD0iIzc0NzFDNiIvPg0KPHBhdGggZD0iTTkwLjYyMzcgNDcuNjI2MkM5Ny4yMTMxIDUxLjQ1MzUgMTAzLjQ2MSA1NS44MDM4IDEwOS4zMTEgNjAuNjIwMkMxMDkuODY2IDYxLjA3NzIgMTEwLjQxNyA2MS41MzgxIDExMC45NjUgNjIuMDAzNEMxMTEuMDQ0IDYyLjA3MDIgMTExLjEyMiA2Mi4xMzczIDExMS4yMDEgNjIuMjA0M0MxMTEuNzc1IDYyLjY5MzkgMTEyLjM0NCA2My4xODgxIDExMi45MSA2My42ODY4QzExMi45NiA2My43MzExIDExMy4wMSA2My43NzU1IDExMy4wNiA2My44MTk5QzExMy42NCA2NC4zMzI0IDExNC4yMTYgNjQuODQ5MiAxMTQuNzg3IDY1LjM3MTFDMTE1LjEzNCA2NS42ODc4IDExNS40NzkgNjYuMDA2MiAxMTUuODIyIDY2LjMyNjNDMTE3LjAwNiA2Ny40MzAyIDExOC4xNzEgNjguNTU0NSAxMTkuMzE2IDY5LjY5ODRDMTE5LjM0NSA2OS43MjczIDExOS4zNzQgNjkuNzU2MSAxMTkuNDAzIDY5Ljc4NUMxMTkuOTY1IDcwLjM0NzQgMTIwLjUyMSA3MC45MTUgMTIxLjA3NCA3MS40ODY4QzEyMS4wOTUgNzEuNTA5MSAxMjEuMTE3IDcxLjUzMTMgMTIxLjEzOCA3MS41NTM2QzEyMS40MjIgNzEuODQ3OCAxMjEuNzA1IDcyLjE0MyAxMjEuOTg2IDcyLjQzOTZDMTE3LjcyNiA3Ny44MDY4IDExMi45OTMgODIuNzgxMSAxMDcuODUgODcuMjk5NUMxMDcuODI4IDg3LjMxODkgMTA3LjgwNSA4Ny4zMzgyIDEwNy43ODMgODcuMzU3NkM5Mi45MTU0IDg1LjM0NzcgNzguOTQwNyA4MC41MjUgNjYuNDExNiA3My40NDMyQzczLjYxNDEgNjQuMDU2NSA4MS43Mjg4IDU1LjQwNjQgOTAuNjIzNyA0Ny42MjYyWiIgZmlsbD0iI0ExODdGRiIvPg0KPC9zdmc+",
+    "author": "Yanis Benhalima <yanis.benhalima@commify.com>",
+    "version": "1.0.0",
+    "auth": {
+        "service": "appmixer:esendex"
+    },
+    "inPorts": [
+        {
+            "name": "in",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "requestId": {
+                        "type": "string"
+                    },
+                    "conversationId": {
+                        "type": "string"
+                    },
+                    "msisdn": {
+                        "type": "string"
+                    },
+                    "originator": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "direction": {
+                        "type": "string"
+                    },
+                    "startTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "endTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "outputType": {
+                        "type": "string"
+                    }
+                }
+            },
+            "inspector": {
+                "inputs": {
+                    "requestId": {
+                        "type": "text",
+                        "index": 1,
+                        "label": "Request ID",
+                        "tooltip": "Filter by the request ID (GUID) that was returned when the messages were sent."
+                    },
+                    "conversationId": {
+                        "type": "text",
+                        "index": 2,
+                        "label": "Conversation ID",
+                        "tooltip": "Filter to a conversation: all inbound and outbound messages between your account and one recipient."
+                    },
+                    "msisdn": {
+                        "type": "text",
+                        "index": 3,
+                        "label": "Phone number",
+                        "tooltip": "Filter by the phone number that received the outbound message or sent the inbound message. Use international format, e.g. +447700900123."
+                    },
+                    "originator": {
+                        "type": "text",
+                        "index": 4,
+                        "label": "Originator",
+                        "tooltip": "Filter by the 'from' value of outbound messages or the 'to' value of inbound messages, e.g. a sender ID, VMN or shortcode."
+                    },
+                    "status": {
+                        "type": "text",
+                        "index": 5,
+                        "label": "Status",
+                        "tooltip": "Filter by message status, e.g. Delivered, Received, Failed or In Progress."
+                    },
+                    "direction": {
+                        "type": "select",
+                        "index": 6,
+                        "label": "Direction",
+                        "options": [
+                            {
+                                "content": "All",
+                                "value": ""
+                            },
+                            {
+                                "content": "Outbound",
+                                "value": "Outbound"
+                            },
+                            {
+                                "content": "Inbound",
+                                "value": "Inbound"
+                            }
+                        ],
+                        "tooltip": "Filter by message direction."
+                    },
+                    "startTime": {
+                        "type": "date-time",
+                        "index": 7,
+                        "label": "Submitted after",
+                        "config": {
+                            "enableTime": true,
+                            "enableSeconds": true
+                        },
+                        "tooltip": "Only return messages submitted at or after this time."
+                    },
+                    "endTime": {
+                        "type": "date-time",
+                        "index": 8,
+                        "label": "Submitted before",
+                        "config": {
+                            "enableTime": true,
+                            "enableSeconds": true
+                        },
+                        "tooltip": "Only return messages submitted at or before this time."
+                    },
+                    "outputType": {
+                        "type": "select",
+                        "index": 9,
+                        "label": "Output Type",
+                        "defaultValue": "array",
+                        "tooltip": "How the results are returned. 'All items at once' fits small result sets (limited by the engine message size); 'Store to CSV file' streams a full export of any size; 'One item at a time' emits every record and resumes across runs on large accounts; 'First item only' returns the first match.",
+                        "options": [
+                            {
+                                "label": "First Item Only",
+                                "value": "first"
+                            },
+                            {
+                                "label": "All items at once",
+                                "value": "array"
+                            },
+                            {
+                                "label": "One item at a time",
+                                "value": "object"
+                            },
+                            {
+                                "label": "Store to CSV file",
+                                "value": "file"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "outPorts": [
+        {
+            "name": "out",
+            "source": {
+                "url": "/component/appmixer/esendex/core/FindMessages?outPort=out&ignoreAuth=true",
+                "data": {
+                    "properties": {
+                        "generateOutputPortOptions": true
+                    },
+                    "messages": {
+                        "in/outputType": "inputs/in/outputType"
+                    }
+                }
+            }
+        },
+        {
+            "name": "notFound"
+        }
+    ]
+}

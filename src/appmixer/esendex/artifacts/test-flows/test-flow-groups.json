@@ -1,0 +1,112 @@
+{
+  "name": "E2E Esendex - groups",
+  "description": "End-to-end test for FindGroups - searches the account groups via GET /v2/groups and asserts the result is non-empty. Requires the connected account to have at least one group.",
+  "flow": {
+    "on-start": {
+      "type": "appmixer.utils.controls.OnStart",
+      "x": 64,
+      "y": 16,
+      "source": {},
+      "version": "1.0.0",
+      "config": {}
+    },
+    "find-groups": {
+      "type": "appmixer.esendex.core.FindGroups",
+      "x": 256,
+      "y": 16,
+      "version": "1.0.0",
+      "source": { "in": { "on-start": ["out"] } },
+      "config": {
+        "transform": {
+          "in": {
+            "on-start": {
+              "out": {
+                "type": "json2new",
+                "modifiers": {},
+                "lambda": { "outputType": "array" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "assert-find": {
+      "type": "appmixer.utils.test.Assert",
+      "x": 448,
+      "y": 16,
+      "version": "1.0.0",
+      "source": { "in": { "find-groups": ["out"] } },
+      "config": {
+        "transform": {
+          "in": {
+            "find-groups": {
+              "out": {
+                "type": "json2new",
+                "modifiers": {
+                  "expression": {
+                    "check-result": {
+                      "variable": "$.find-groups.out.result",
+                      "functions": []
+                    }
+                  }
+                },
+                "lambda": {
+                  "expression": {
+                    "AND": [
+                      { "field": "{{{check-result}}}", "assertion": "notEmpty" }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "after-all": {
+      "type": "appmixer.utils.test.AfterAll",
+      "x": 640,
+      "y": 16,
+      "version": "1.0.0",
+      "source": { "in": { "assert-find": ["out"] } },
+      "config": { "properties": { "timeout": 120 } }
+    },
+    "process-results": {
+      "type": "appmixer.utils.test.ProcessE2EResults",
+      "x": 832,
+      "y": 16,
+      "version": "1.0.0",
+      "source": { "in": { "after-all": ["out"] } },
+      "config": {
+        "properties": {
+          "successStoreId": "6a7f29eeff46475feb6734f5",
+          "failedStoreId": "6a7f29ee62f8490f6b01bf56"
+        },
+        "transform": {
+          "in": {
+            "after-all": {
+              "out": {
+                "type": "json2new",
+                "modifiers": {
+                  "recipients": {},
+                  "testCase": {},
+                  "result": {
+                    "result-var": {
+                      "variable": "$.after-all.out",
+                      "functions": []
+                    }
+                  }
+                },
+                "lambda": {
+                  "recipients": "test@appmixer.com",
+                  "testCase": "E2E Esendex - groups",
+                  "result": "{{{result-var}}}"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

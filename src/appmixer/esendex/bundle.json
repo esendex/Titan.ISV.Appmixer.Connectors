@@ -1,0 +1,40 @@
+{
+    "name": "appmixer.esendex",
+    "version": "1.9.0",
+    "changelog": {
+        "1.0.0": [
+            "Initial release: API key authentication, SendMessage, FindMessages and MakeApiCall components."
+        ],
+        "1.1.0": [
+            "Added FindContacts component: GET /v2/contacts/filter",
+            "Added FindTemplates component and template dropdown in SendMessage."
+        ],
+        "1.2.0": [
+            "Added FindOptOuts component: GET /v2/optouts"
+        ],
+        "1.3.0": [
+            "Added FindGroups component: GET /v2/groups"
+        ],
+        "1.4.0": [
+            "Added CreateContact component: POST /v2/contacts",
+            "FindMessages: fetch all pages internally (up to 100) and guard oversized 'array' output"
+        ],
+        "1.5.0": [
+            "Added CreateThrottleSchedule component: POST /v2/throttle-schedule"
+        ],
+        "1.6.0": [
+            "Find components: aligned with Appmixer's official large-volume pattern - page loops stop on message-size budget and execution-time deadline (never a record cap), CSV exports stream page by page, 429 rate limits retry with backoff inside the loop, and 'one item at a time' exports checkpoint and resume until every record is emitted."
+        ],
+        "1.7.0": [
+            "Error handling aligned with current Appmixer guidance: permanent API errors (4xx) cancel the run instead of being auto-retried; transient failures (408/429, 5xx, network) remain retryable."
+        ],
+        "1.8.0": [
+            "SendMessage and CreateThrottleSchedule: send the X-External-Source header so the API gateway attributes requests to this integration."
+        ],
+        "1.9.0": [
+            "Every component now ships the Esendex logo as an SVG icon (two components had none).",
+            "Find Contacts, Find Groups, Find Messages, Find Opt Outs and Find Templates export their output contract as ITEM_SCHEMA, with an example for each field shown in the variable picker.",
+            "Create Throttle Schedule: the billing output fields are titled Billing Details.Projected Balance / Billing Details.Currency so they can be told apart in the variable picker."
+        ]
+    }
+}
